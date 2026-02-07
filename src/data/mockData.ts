@@ -219,6 +219,42 @@ export const mockBookings: Booking[] = [
     createdAt: '2025-02-05T12:00:00Z',
     updatedAt: '2025-02-05T12:00:00Z',
   },
+  {
+    id: 'b6',
+    customerId: 'c1',
+    stylistId: 's3',
+    serviceId: 'sv6',
+    startTime: `${todayStr}T15:00:00Z`,
+    endTime: `${todayStr}T15:30:00Z`,
+    status: 'completed',
+    internalNote: '',
+    createdAt: '2025-02-06T08:00:00Z',
+    updatedAt: '2025-02-06T08:00:00Z',
+  },
+  {
+    id: 'b7',
+    customerId: 'c3',
+    stylistId: 's2',
+    serviceId: 'sv4',
+    startTime: `${todayStr}T11:00:00Z`,
+    endTime: `${todayStr}T12:30:00Z`,
+    status: 'confirmed',
+    internalNote: '',
+    createdAt: '2025-02-05T14:00:00Z',
+    updatedAt: '2025-02-05T14:00:00Z',
+  },
+  {
+    id: 'b8',
+    customerId: 'c4',
+    stylistId: 's1',
+    serviceId: 'sv1',
+    startTime: `${todayStr}T16:00:00Z`,
+    endTime: `${todayStr}T17:00:00Z`,
+    status: 'cancelled',
+    internalNote: 'Kund avbokade i morse',
+    createdAt: '2025-02-04T09:00:00Z',
+    updatedAt: '2025-02-06T09:30:00Z',
+  },
 ]
 
 // Mock Blocked Times
@@ -239,6 +275,7 @@ export const mockBlockedTimes: BlockedTime[] = [
     reason: 'lunch',
     note: '',
   },
+  
 ]
 
 // Mock Salon Settings
