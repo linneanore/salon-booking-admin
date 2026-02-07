@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 25% 98%;
+    --foreground: 20 20% 12%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 20 20% 12%;
+    
+    --primary: 350 45% 55%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 30 20% 94%;
+    --secondary-foreground: 20 20% 20%;
+    
+    --muted: 30 15% 95%;
+    --muted-foreground: 20 10% 50%;
+    
+    --accent: 30 30% 92%;
+    --accent-foreground: 20 20% 15%;
+    
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 30 15% 90%;
+    --input: 30 15% 88%;
+    --ring: 350 45% 55%;
+    
+    --radius: 0.625rem;
+    
+    /* Sidebar colors */
+    --sidebar-background: 20 18% 14%;
+    --sidebar-foreground: 30 15% 85%;
+    --sidebar-primary: 350 45% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 20 15% 20%;
+    --sidebar-accent-foreground: 30 15% 90%;
+    --sidebar-border: 20 12% 22%;
+    
+    /* Custom salon colors */
+    --salon-rose: 350 45% 55%;
+    --salon-rose-light: 350 50% 92%;
+    --salon-gold: 38 70% 55%;
+    --salon-gold-light: 38 60% 92%;
+    --salon-success: 152 55% 42%;
+    --salon-success-light: 152 45% 92%;
+    --salon-warning: 38 92% 50%;
+    --salon-warning-light: 38 80% 92%;
+    --salon-info: 210 65% 55%;
+    --salon-info-light: 210 55% 92%;
+    
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  
+  h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  .stat-card {
+    @apply rounded-xl border bg-card p-5 shadow-sm transition-shadow hover:shadow-md;
+  }
+  
+  .page-header {
+    @apply mb-6 flex flex-col gap-1;
+  }
+  
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  
+  .page-description {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  .empty-state {
+    @apply flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed bg-muted/30 p-12 text-center;
+  }
+}
