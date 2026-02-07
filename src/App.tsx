@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import AppLayout from './components/layout/AppLayout'
+import { Toaster } from './components/shared/Toaster'
 import Dashboard from './pages/Dashboard'
 import Calendar from './pages/Calendar'
 import Bookings from './pages/Bookings'
@@ -11,6 +12,7 @@ import Settings from './pages/Settings'
 function App() {
   return (
     <BrowserRouter>
+    <Toaster />
       <AppLayout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
