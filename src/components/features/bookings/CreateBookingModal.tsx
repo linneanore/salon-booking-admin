@@ -38,12 +38,12 @@ export function CreateBookingModal({ open, onClose }: CreateBookingModalProps) {
   const selectedService = getService(selectedServiceId)
 
   const onSubmit = async (data: BookingFormData) => {
-    try {
-      // Combine date and time into ISO string
-      const startTime = `${data.date}T${data.time}:00Z`
-      const endTime = selectedService
-        ? calculateEndTime(startTime, selectedService.durationMinutes)
-        : startTime
+  try {
+    
+    const startTime = `${data.date}T${data.time}:00`
+    const endTime = selectedService
+      ? calculateEndTime(startTime, selectedService.durationMinutes)
+      : startTime
 
       addBooking({
         customerId: data.customerId,

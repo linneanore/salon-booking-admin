@@ -56,9 +56,16 @@ export const statusLabels: Record<BookingStatus, string> = {
   noshow: 'No-show',
 }
 
-// Calculate end time based on start time and duration
 export function calculateEndTime(startTime: string, durationMinutes: number): string {
   const start = parseISO(startTime)
   const end = new Date(start.getTime() + durationMinutes * 60000)
-  return end.toISOString()
+  
+  const year = end.getFullYear()
+  const month = String(end.getMonth() + 1).padStart(2, '0')
+  const day = String(end.getDate()).padStart(2, '0')
+  const hours = String(end.getHours()).padStart(2, '0')
+  const minutes = String(end.getMinutes()).padStart(2, '0')
+  const seconds = String(end.getSeconds()).padStart(2, '0')
+  
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`
 }

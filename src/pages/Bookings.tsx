@@ -197,7 +197,10 @@ export default function Bookings() {
       )}
 
       {/* Create Booking Modal */}
-      <CreateBookingModal open={showCreateModal} onClose={() => setShowCreateModal(false)} />
+      <CreateBookingModal 
+        open={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+      />
     </div>
   )
 }
