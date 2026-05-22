@@ -8,9 +8,11 @@ import Customers from './pages/Customers'
 import Services from './pages/Services'
 import Staff from './pages/Staff'
 import Settings from './pages/Settings'
+import { DataProvider } from './context/DataContext'
 
 function App() {
   return (
+    <DataProvider>
     <BrowserRouter>
     <Toaster />
       <AppLayout>
@@ -25,6 +27,7 @@ function App() {
         </Routes>
       </AppLayout>
     </BrowserRouter>
+    </DataProvider>
   )
 }
 

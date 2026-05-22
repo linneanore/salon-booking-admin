@@ -3,24 +3,21 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { toast } from 'sonner'
-import { mockBookings, mockCustomers, mockStylists, mockServices } from '@/data/mockData'
+import { useData } from '@/context/DataContext'
 import { formatTime, formatCurrency, isSameDay } from '@/lib/format'
 
 export default function Dashboard() {
-  // Calculate stats from mock data
+  const { bookings, customers, services, getCustomerName, getStylistName, getServiceName } = useData()
+
+  // Calculate stats from bookings
   const today = new Date()
-  const todayBookings = mockBookings.filter(b => isSameDay(new Date(b.startTime), today))
-  const upcomingBookings = mockBookings.filter(b => {
+  const todayBookings = bookings.filter(b => isSameDay(new Date(b.startTime), today))
+  const upcomingBookings = bookings.filter(b => {
     const bookingDate = new Date(b.startTime)
     const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
     return bookingDate >= today && bookingDate <= weekFromNow && b.status !== 'cancelled'
   })
-  const cancelledCount = mockBookings.filter(b => b.status === 'cancelled').length
-
-  // Helper functions to get names
-  const getCustomerName = (id: string) => mockCustomers.find(c => c.id === id)?.name || 'Okänd'
-  const getStylistName = (id: string) => mockStylists.find(s => s.id === id)?.name || 'Okänd'
-  const getServiceName = (id: string) => mockServices.find(s => s.id === id)?.name || 'Okänd'
+  const cancelledCount = bookings.filter(b => b.status === 'cancelled').length
 
   const handleNewBooking = () => {
     toast.success('Ny bokning öppnas snart!')
@@ -103,7 +100,7 @@ export default function Dashboard() {
                 <Users className="h-5 w-5 text-salon-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{mockCustomers.length}</p>
+                <p className="text-2xl font-bold">{customers.length}</p>
                 <p className="text-xs text-muted-foreground">Kunder</p>
               </div>
             </div>
@@ -155,8 +152,8 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y">
-              {mockServices.slice(0, 4).map(service => {
-                const bookingCount = mockBookings.filter(
+              {services.slice(0, 4).map(service => {
+                const bookingCount = bookings.filter(
                   b => b.serviceId === service.id
                 ).length
 

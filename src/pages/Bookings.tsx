@@ -5,30 +5,30 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { StatusBadge } from '@/components/shared/StatusBadge'
-import { mockBookings, mockCustomers, mockStylists, mockServices } from '@/data/mockData'
+import { CreateBookingModal } from '@/components/features/bookings/CreateBookingModal'
+import { useData } from '@/context/DataContext'
 import { formatDate, formatTime, statusLabels } from '@/lib/format'
-import type { BookingStatus, Booking } from '@/types'
-import { toast } from 'sonner'
 
 export default function Bookings() {
+  const { bookings, stylists, getCustomerName, getStylistName, getServiceName } = useData()
+  
   // State for filters
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [stylistFilter, setStylistFilter] = useState<string>('all')
+  const [showCreateModal, setShowCreateModal] = useState(false)
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + K to focus search
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
-        document.querySelector('input[placeholder*="Sök"]')?.focus()
+        document.querySelector<HTMLInputElement>('input[placeholder*="Sök"]')?.focus()
       }
       
-      // Cmd/Ctrl + Enter to create new booking
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
         e.preventDefault()
-        handleNewBooking()
+        setShowCreateModal(true)
       }
     }
 
@@ -36,26 +36,18 @@ export default function Bookings() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // Helper functions to get names
-  const getCustomerName = (id: string) => mockCustomers.find(c => c.id === id)?.name || 'Okänd'
-  const getStylistName = (id: string) => mockStylists.find(s => s.id === id)?.name || 'Okänd'
-  const getServiceName = (id: string) => mockServices.find(s => s.id === id)?.name || 'Okänd'
-
   // Filter and search bookings
   const filteredBookings = useMemo(() => {
-    let result = [...mockBookings]
+    let result = [...bookings]
 
-    // Filter by status
     if (statusFilter !== 'all') {
       result = result.filter(b => b.status === statusFilter)
     }
 
-    // Filter by stylist
     if (stylistFilter !== 'all') {
       result = result.filter(b => b.stylistId === stylistFilter)
     }
 
-    // Search by customer, service, or stylist name
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       result = result.filter(b => {
@@ -71,19 +63,9 @@ export default function Bookings() {
       })
     }
 
-    // Sort by start time (newest first)
     result.sort((a, b) => b.startTime.localeCompare(a.startTime))
-
     return result
-  }, [searchQuery, statusFilter, stylistFilter])
-
-  const handleNewBooking = () => {
-    toast.success('Bokningsformulär öppnas i nästa milestone!')
-  }
-
-  const handleBookingClick = (booking: Booking) => {
-    toast.info(`Detaljer för ${getCustomerName(booking.customerId)} visas snart`)
-  }
+  }, [bookings, searchQuery, statusFilter, stylistFilter, getCustomerName, getServiceName, getStylistName])
 
   return (
     <div className="animate-fade-in space-y-4">
@@ -92,10 +74,10 @@ export default function Bookings() {
         <div className="page-header">
           <h1 className="page-title">Bokningar</h1>
           <p className="page-description">
-            {mockBookings.length} {mockBookings.length === 1 ? 'bokning' : 'bokningar'} totalt
+            {bookings.length} {bookings.length === 1 ? 'bokning' : 'bokningar'} totalt
           </p>
         </div>
-        <Button onClick={handleNewBooking} className="gap-2">
+        <Button onClick={() => setShowCreateModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
           Ny bokning
         </Button>
@@ -103,7 +85,6 @@ export default function Bookings() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
-        {/* Search */}
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -114,7 +95,6 @@ export default function Bookings() {
           />
         </div>
 
-        {/* Status Filter */}
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="Status" />
@@ -129,14 +109,13 @@ export default function Bookings() {
           </SelectContent>
         </Select>
 
-        {/* Stylist Filter */}
         <Select value={stylistFilter} onValueChange={setStylistFilter}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Stylist" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Alla stylister</SelectItem>
-            {mockStylists
+            {stylists
               .filter(s => s.isActive)
               .map(stylist => (
                 <SelectItem key={stylist.id} value={stylist.id}>
@@ -150,7 +129,7 @@ export default function Bookings() {
       {/* Results count */}
       {(searchQuery || statusFilter !== 'all' || stylistFilter !== 'all') && (
         <p className="text-sm text-muted-foreground">
-          Visar {filteredBookings.length} av {mockBookings.length} bokningar
+          Visar {filteredBookings.length} av {bookings.length} bokningar
         </p>
       )}
 
@@ -187,16 +166,11 @@ export default function Bookings() {
                 <TableHead>Behandling</TableHead>
                 <TableHead>Stylist</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="w-[100px]">Åtgärder</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredBookings.map(booking => (
-                <TableRow
-                  key={booking.id}
-                  className="cursor-pointer"
-                  onClick={() => handleBookingClick(booking)}
-                >
+                <TableRow key={booking.id} className="cursor-pointer">
                   <TableCell>
                     <div>
                       <p className="font-medium">{formatDate(booking.startTime)}</p>
@@ -215,24 +189,15 @@ export default function Bookings() {
                   <TableCell>
                     <StatusBadge status={booking.status} />
                   </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        toast.info('Redigera öppnas snart')
-                      }}
-                    >
-                      Visa
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
       )}
+
+      {/* Create Booking Modal */}
+      <CreateBookingModal open={showCreateModal} onClose={() => setShowCreateModal(false)} />
     </div>
   )
 }
