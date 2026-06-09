@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useData } from '@/context/DataContext'
+import { useData } from '@/hooks/useData'
 import { format, addDays, startOfWeek, isSameDay } from 'date-fns'
 import { sv } from 'date-fns/locale'
 

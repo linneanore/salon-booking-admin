@@ -3,7 +3,7 @@ import { Users, Plus, Search, Clock, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { useData } from '@/context/DataContext'
+import { useData } from '@/hooks/useData'
 
 const DAYS = ['Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör']
 

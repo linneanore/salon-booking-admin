@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useData } from '@/context/DataContext'
+import { useData } from '@/hooks/useData'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
 

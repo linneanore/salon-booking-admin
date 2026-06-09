@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { CreateBookingModal } from '@/components/features/bookings/CreateBookingModal'
-import { useData } from '@/context/DataContext'
+import { useData } from '@/hooks/useData'
 import { formatDate, formatTime, statusLabels } from '@/lib/format'
 
 export default function Bookings() {

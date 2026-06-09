@@ -1,55 +1,70 @@
-/* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { Booking, Customer, Service, Stylist } from '@/types'
-import { mockBookings, mockCustomers, mockServices, mockStylists } from '@/data/mockData'
+import { mockServices, mockStylists } from '@/data/mockData'
+import { customersApi, bookingsApi } from '@/lib/api'
 
 interface DataContextType {
   bookings: Booking[]
   customers: Customer[]
   services: Service[]
   stylists: Stylist[]
-  addBooking: (booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>) => void
-  updateBooking: (id: string, updates: Partial<Booking>) => void
-  deleteBooking: (id: string) => void
+  isLoading: boolean
+  addBooking: (booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
+  updateBooking: (id: string, updates: Partial<Booking>) => Promise<void>
+  deleteBooking: (id: string) => Promise<void>
   getCustomerName: (id: string) => string
   getStylistName: (id: string) => string
   getServiceName: (id: string) => string
   getService: (id: string) => Service | undefined
 }
 
-const DataContext = createContext<DataContextType | null>(null)
-
-let nextId = 100 // Simple ID generator
+export const DataContext = createContext<DataContextType | null>(null)
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [bookings, setBookings] = useState<Booking[]>(mockBookings)
-  const [customers] = useState<Customer[]>(mockCustomers)
+  const [bookings, setBookings] = useState<Booking[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
   const [services] = useState<Service[]>(mockServices)
   const [stylists] = useState<Stylist[]>(mockStylists)
 
-  const addBooking = (booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const now = new Date().toISOString()
-    const newBooking: Booking = {
-      ...booking,
-      id: `b${nextId++}`,
-      createdAt: now,
-      updatedAt: now,
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true)
+        const [fetchedCustomers, fetchedBookings] = await Promise.all([
+          customersApi.getAll(),
+          bookingsApi.getAll(),
+        ])
+        setCustomers(fetchedCustomers)
+        setBookings(fetchedBookings)
+      } catch (error) {
+        console.error('Kunde inte hämta data från API:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
+
+    fetchData()
+  }, [])
+
+  const addBooking = async (booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newBooking = await bookingsApi.create(booking)
     setBookings(prev => [...prev, newBooking])
   }
 
-  const updateBooking = (id: string, updates: Partial<Booking>) => {
+  const updateBooking = async (id: string, updates: Partial<Booking>) => {
+    const existing = bookings.find(b => b.id === id)
+    if (!existing) return
+    await bookingsApi.update(id, { ...existing, ...updates })
     setBookings(prev =>
-      prev.map(b =>
-        b.id === id
-          ? { ...b, ...updates, updatedAt: new Date().toISOString() }
-          : b
-      )
+      prev.map(b => b.id === id ? { ...b, ...updates } : b)
     )
   }
 
-  const deleteBooking = (id: string) => {
+  const deleteBooking = async (id: string) => {
+    await bookingsApi.delete(id)
     setBookings(prev => prev.filter(b => b.id !== id))
   }
 
@@ -59,31 +74,21 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const getService = (id: string) => services.find(s => s.id === id)
 
   return (
-    <DataContext.Provider
-      value={{
-        bookings,
-        customers,
-        services,
-        stylists,
-        addBooking,
-        updateBooking,
-        deleteBooking,
-        getCustomerName,
-        getStylistName,
-        getServiceName,
-        getService,
-      }}
-    >
+    <DataContext.Provider value={{
+      bookings,
+      customers,
+      services,
+      stylists,
+      isLoading,
+      addBooking,
+      updateBooking,
+      deleteBooking,
+      getCustomerName,
+      getStylistName,
+      getServiceName,
+      getService,
+    }}>
       {children}
     </DataContext.Provider>
   )
-}
-
-// Hook export at the bottom
-export function useData() {
-  const context = useContext(DataContext)
-  if (!context) {
-    throw new Error('useData must be used within DataProvider')
-  }
-  return context
 }

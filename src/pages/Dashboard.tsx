@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { toast } from 'sonner'
-import { useData } from '@/context/DataContext'
+import { useData } from '@/hooks/useData'
 import { formatTime, formatCurrency, isSameDay } from '@/lib/format'
 
 export default function Dashboard() {
